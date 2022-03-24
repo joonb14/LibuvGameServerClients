@@ -18,6 +18,11 @@ public class MyPlayer : Player
     {
 
     }
+    private void OnApplicationQuit()
+    {
+        C_LEAVEGAME leavePacket = new C_LEAVEGAME();
+        _network.Send(leavePacket.Write());
+    }
 
     IEnumerator CoSendPacket()
     {
