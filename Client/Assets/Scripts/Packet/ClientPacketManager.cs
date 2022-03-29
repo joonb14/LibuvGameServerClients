@@ -14,9 +14,9 @@ public class PacketManager
     {
         Register();
     }
-    Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<PacketSession, ArraySegment<byte>,IPacket>>();
+    Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>> _makeFunc = new Dictionary<ushort, Func<PacketSession, ArraySegment<byte>, IPacket>>();
     Dictionary<ushort, Action<PacketSession, IPacket>> _handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
-        
+
     public void Register()
     {
         _makeFunc.Add((ushort)PacketID.S_BROADCASTENTERGAME, MakePacket<S_BROADCASTENTERGAME>);
@@ -27,6 +27,8 @@ public class PacketManager
         _handler.Add((ushort)PacketID.S_PLAYERLIST, PacketHandler.S_PLAYERLISTHandler);
         _makeFunc.Add((ushort)PacketID.S_BROADCASTMOVE, MakePacket<S_BROADCASTMOVE>);
         _handler.Add((ushort)PacketID.S_BROADCASTMOVE, PacketHandler.S_BROADCASTMOVEHandler);
+        _makeFunc.Add((ushort)PacketID.S_TESTBROADCASTMOVE, MakePacket<S_TESTBROADCASTMOVE>);
+        _handler.Add((ushort)PacketID.S_TESTBROADCASTMOVE, PacketHandler.S_TESTBROADCASTMOVEHandler);
 
     }
 
@@ -44,10 +46,10 @@ public class PacketManager
         Func<PacketSession, ArraySegment<byte>, IPacket> func = null;
         if (_makeFunc.TryGetValue(id, out func))
         {
-            IPacket packet = func.Invoke(session, buffer); 
+            IPacket packet = func.Invoke(session, buffer);
             if (onRecvCallback != null)
-                onRecvCallback.Invoke(session,packet);
-                // ServerSession.cs에서 onRecvCallback을 정의해주었기 때문에 얘만 실행됨
+                onRecvCallback.Invoke(session, packet);
+            // ServerSession.cs에서 onRecvCallback을 정의해주었기 때문에 얘만 실행됨
             else
                 HandlePacket(session, packet);
         }
