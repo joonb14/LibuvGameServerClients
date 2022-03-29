@@ -11,14 +11,13 @@ public class PlayerManager
 
     public void Add(S_PLAYERLIST packet)
     {
-        Object myObj = Resources.Load("Prefabs/unitychan");
-        Object obj = Resources.Load("Prefabs/Player");
+        Object obj = Resources.Load("Prefabs/unitychan");
 
         foreach (S_PLAYERLIST.Player p in packet.players)
         {
             if (p.isSelf)
             {
-                GameObject go = Object.Instantiate(myObj) as GameObject;
+                GameObject go = Object.Instantiate(obj) as GameObject;
                 go.name = "MyPlayer";
                 MyPlayer myPlayer = go.AddComponent<MyPlayer>();
                 myPlayer.PlayerId = p.playerId;
@@ -74,7 +73,7 @@ public class PlayerManager
         if (packet.playerId == _myPlayer.PlayerId)
             return;
 
-        Object obj = Resources.Load("Prefabs/Player");
+        Object obj = Resources.Load("Prefabs/unitychan");
         GameObject go = Object.Instantiate(obj) as GameObject;
 
         Player player = go.AddComponent<Player>();
