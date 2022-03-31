@@ -4,7 +4,21 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public enum PlayerState
+    {
+        Die,
+        Idle,
+        Running,
+        Jumping,
+        Waving
+    }
+
     public int PlayerId { get; set; }
+    public PlayerState _state = PlayerState.Idle;
+    float _wait_run_ratio = 0;
+    float _speed = 10.0f;
+    public Vector3 _destPos;
+    public bool _moveToDest = false;
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +29,53 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (_moveToDest)
+        {
+            _state = PlayerState.Running;
+            Vector3 dir = _destPos - transform.position;
+            if (dir.magnitude < 0.0001f) // µµÂø
+            {
+                _moveToDest = false;
+                _state = PlayerState.Idle;
+            }
+            else
+            {
+                float moveDist = Mathf.Clamp(_speed * Time.deltaTime, 0, dir.magnitude);
+                transform.position += dir.normalized * moveDist;
+                transform.LookAt(_destPos);
+            }
+        }
+
+        switch (_state)
+        {
+            case PlayerState.Die:
+                break;
+            case PlayerState.Idle:
+                UpdateIdle();
+                break;
+            case PlayerState.Running:
+                UpdateRunning();
+                break;
+            case PlayerState.Jumping:
+                break;
+            case PlayerState.Waving:
+                break;
+        }
+    }
+
+    protected void UpdateIdle()
+    {
+        Animator anim = GetComponent<Animator>();
+        _wait_run_ratio = Mathf.Lerp(_wait_run_ratio, 0, 10.0f * Time.deltaTime);
+        anim.SetFloat("wait_run_ratio", _wait_run_ratio);
+        anim.Play("WAIT_RUN");
+    }
+
+    protected void UpdateRunning()
+    {
+        Animator anim = GetComponent<Animator>();
+        _wait_run_ratio = Mathf.Lerp(_wait_run_ratio, 1, 10.0f * Time.deltaTime);
+        anim.SetFloat("wait_run_ratio", _wait_run_ratio);
+        anim.Play("WAIT_RUN");
     }
 }

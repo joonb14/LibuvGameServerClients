@@ -39,22 +39,6 @@ public class PlayerManager
     {
         if (_myPlayer.PlayerId == packet.playerId)
         {
-            _myPlayer.transform.position = new Vector3(packet.posX, packet.posY, packet.posZ);
-        }
-        else
-        {
-            Player player = null;
-            if (_players.TryGetValue(packet.playerId, out player))
-            {
-                player.transform.position = new Vector3(packet.posX, packet.posY, packet.posZ);
-            }
-        }
-    }
-
-    public void Move(S_TESTBROADCASTMOVE packet)
-    {
-        if (_myPlayer.PlayerId == packet.playerId)
-        {
             // _myPlayer.transform.position = new Vector3(packet.posX, packet.posY, packet.posZ);
         }
         else
@@ -62,8 +46,9 @@ public class PlayerManager
             Player player = null;
             if (_players.TryGetValue(packet.playerId, out player))
             {
-                player.transform.position = new Vector3(packet.position.x, packet.position.y, packet.position.z);
-                player.transform.rotation = new Quaternion(packet.rotation.x, packet.rotation.y, packet.rotation.z, packet.rotation.w);
+                // player.transform.position = new Vector3(packet.posX, packet.posY, packet.posZ);
+                player._destPos = new Vector3(packet.posX, packet.posY, packet.posZ);
+                player._moveToDest = true;
             }
         }
     }

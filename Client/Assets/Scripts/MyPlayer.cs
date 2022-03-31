@@ -8,7 +8,6 @@ public class MyPlayer : Player
     NetworkManager  _network;
     float           _speed = 10.0f;
     PlayerState     _state = PlayerState.Idle;
-    float           _wait_run_ratio = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -19,14 +18,6 @@ public class MyPlayer : Player
         Managers.Input.KeyAction += OnKeyboard;
     }
 
-    public enum PlayerState
-    {
-        Die,
-        Idle,
-        Running,
-        Jumping,
-        Waving
-    }
 
     // Update is called once per frame
     void Update()
@@ -51,21 +42,6 @@ public class MyPlayer : Player
         }
     }
 
-    void UpdateIdle()
-    {
-        Animator anim = GetComponent<Animator>();
-        _wait_run_ratio = Mathf.Lerp(_wait_run_ratio, 0, 10.0f * Time.deltaTime);
-        anim.SetFloat("wait_run_ratio", _wait_run_ratio);
-        anim.Play("WAIT_RUN");
-    }
-
-    void UpdateRunning()
-    {
-        Animator anim = GetComponent<Animator>();
-        _wait_run_ratio = Mathf.Lerp(_wait_run_ratio, 1, 10.0f * Time.deltaTime);
-        anim.SetFloat("wait_run_ratio", _wait_run_ratio);
-        anim.Play("WAIT_RUN");
-    }
 
     void OnKeyboard()
     {
@@ -109,15 +85,10 @@ public class MyPlayer : Player
             yield return new WaitForSeconds(0.1f);
             try
             {
-                C_TESTMOVE movePacket = new C_TESTMOVE();
-                movePacket.position.x = transform.position.x;
-                movePacket.position.y = transform.position.y;
-                movePacket.position.z = transform.position.z;
-                                        
-                movePacket.rotation.w = transform.rotation.w;
-                movePacket.rotation.x = transform.rotation.x;
-                movePacket.rotation.y = transform.rotation.y;
-                movePacket.rotation.z = transform.rotation.z;
+                C_MOVE movePacket = new C_MOVE();
+                movePacket.posX = transform.position.x;
+                movePacket.posY = transform.position.y;
+                movePacket.posZ = transform.position.z;
 
                 _network.Send(movePacket.Write());
             }

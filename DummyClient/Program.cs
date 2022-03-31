@@ -41,7 +41,7 @@ namespace DummyClient
                     Console.WriteLine(e.ToString());
                 }
 
-                Thread.Sleep(250);
+                Thread.Sleep(2000);
             }
         }
     }
