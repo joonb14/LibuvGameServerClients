@@ -12,9 +12,8 @@ public enum PacketID
     S_PLAYERLIST = 1003,
     C_MOVE = 1004,
     S_BROADCASTMOVE = 1005,
-    C_TESTMOVE = 1006,
-    S_TESTBROADCASTMOVE = 1007,
-
+    C_ANIMATION = 1006,
+    S_BROADCASTANIMATION = 1007,
 }
 
 public interface IPacket
@@ -303,46 +302,19 @@ public class S_BROADCASTMOVE : IPacket
 }
 
 
-public class C_TESTMOVE : IPacket
+public class C_ANIMATION : IPacket
 {
-    public class Position
-    {
-        public float x;
-        public float y;
-        public float z;
-    }
-    public class Quaternion
-    {
-        public float w;
-        public float x;
-        public float y;
-        public float z;
-    }
+    public int animationId;
 
-    public Position position = new Position();
-    public Quaternion rotation = new Quaternion();
-
-    public ushort Protocol { get { return (ushort)PacketID.C_TESTMOVE; } }
+    public ushort Protocol { get { return (ushort)PacketID.C_ANIMATION; } }
 
     public void Read(ArraySegment<byte> segment)
     {
         ushort count = 0;
         count += sizeof(ushort);
         count += sizeof(ushort);
-        this.position.x = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.position.y = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.position.z = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.rotation.w = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.rotation.x = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.rotation.y = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.rotation.z = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
+        this.animationId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+        count += sizeof(int);
     }
 
     public ArraySegment<byte> Write()
@@ -351,22 +323,10 @@ public class C_TESTMOVE : IPacket
         ushort count = 0;
 
         count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_TESTMOVE), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_ANIMATION), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes(this.position.x), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.position.y), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.position.z), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.rotation.w), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.rotation.x), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.rotation.y), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.rotation.z), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
+        Array.Copy(BitConverter.GetBytes(this.animationId), 0, segment.Array, segment.Offset + count, sizeof(int));
+        count += sizeof(int);
 
         Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 
@@ -374,27 +334,12 @@ public class C_TESTMOVE : IPacket
     }
 }
 
-public class S_TESTBROADCASTMOVE : IPacket
+public class S_BROADCASTANIMATION : IPacket
 {
-    public class Position
-    {
-        public float x;
-        public float y;
-        public float z;
-    }
-    public class Quaternion
-    {
-        public float w;
-        public float x;
-        public float y;
-        public float z;
-    }
-
     public int playerId;
-    public Position position = new Position();
-    public Quaternion rotation = new Quaternion();
+    public int animationId;
 
-    public ushort Protocol { get { return (ushort)PacketID.S_TESTBROADCASTMOVE; } }
+    public ushort Protocol { get { return (ushort)PacketID.S_BROADCASTANIMATION; } }
 
     public void Read(ArraySegment<byte> segment)
     {
@@ -403,20 +348,8 @@ public class S_TESTBROADCASTMOVE : IPacket
         count += sizeof(ushort);
         this.playerId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
         count += sizeof(int);
-        this.position.x = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.position.y = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.position.z = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.rotation.w = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.rotation.x = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.rotation.y = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
-        this.rotation.z = BitConverter.ToSingle(segment.Array, segment.Offset + count);
-        count += sizeof(float);
+        this.animationId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+        count += sizeof(int);
     }
 
     public ArraySegment<byte> Write()
@@ -425,28 +358,15 @@ public class S_TESTBROADCASTMOVE : IPacket
         ushort count = 0;
 
         count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_TESTBROADCASTMOVE), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_BROADCASTANIMATION), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         Array.Copy(BitConverter.GetBytes(this.playerId), 0, segment.Array, segment.Offset + count, sizeof(int));
         count += sizeof(int);
-        Array.Copy(BitConverter.GetBytes(this.position.x), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.position.y), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.position.z), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.rotation.w), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.rotation.x), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.rotation.y), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
-        Array.Copy(BitConverter.GetBytes(this.rotation.z), 0, segment.Array, segment.Offset + count, sizeof(float));
-        count += sizeof(float);
+        Array.Copy(BitConverter.GetBytes(this.animationId), 0, segment.Array, segment.Offset + count, sizeof(int));
+        count += sizeof(int);
 
         Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 
         return SendBufferHelper.Close(count);
     }
 }
-

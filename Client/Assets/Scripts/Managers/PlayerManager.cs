@@ -39,16 +39,15 @@ public class PlayerManager
     {
         if (_myPlayer.PlayerId == packet.playerId)
         {
-            // _myPlayer.transform.position = new Vector3(packet.posX, packet.posY, packet.posZ);
+
         }
         else
         {
             Player player = null;
             if (_players.TryGetValue(packet.playerId, out player))
             {
-                // player.transform.position = new Vector3(packet.posX, packet.posY, packet.posZ);
                 player._destPos = new Vector3(packet.posX, packet.posY, packet.posZ);
-                player._moveToDest = true;
+                player._state = Player.PlayerState.Running;
             }
         }
     }
@@ -79,6 +78,23 @@ public class PlayerManager
             if(_players.TryGetValue(packet.playerId, out player)){
                 GameObject.Destroy(player.gameObject);
                 _players.Remove(packet.playerId);
+            }
+        }
+    }
+
+    public void PlayAnimation(S_BROADCASTANIMATION packet)
+    {
+        if (_myPlayer.PlayerId == packet.playerId)
+        {
+
+        }
+        else
+        {
+            Player player = null;
+            if (_players.TryGetValue(packet.playerId, out player))
+            {
+                player._animNum = (Define.Animation)packet.animationId;
+                player._state = Player.PlayerState.Animation;
             }
         }
     }

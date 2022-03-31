@@ -6,8 +6,6 @@ using UnityEngine;
 public class MyPlayer : Player
 {
     NetworkManager  _network;
-    float           _speed = 10.0f;
-    PlayerState     _state = PlayerState.Idle;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +20,7 @@ public class MyPlayer : Player
     // Update is called once per frame
     void Update()
     {
-        if (Managers.Input._keyPressed == false)
+        if (_state != PlayerState.Animation && Managers.Input._keyPressed == false)
             _state = PlayerState.Idle;
 
         switch (_state)
@@ -37,7 +35,8 @@ public class MyPlayer : Player
                 break;
             case PlayerState.Jumping:
                 break;
-            case PlayerState.Waving:
+            case PlayerState.Animation:
+                UpdateAnimation(_animNum);
                 break;
         }
     }
@@ -74,7 +73,8 @@ public class MyPlayer : Player
         }
         if (Input.GetKey(KeyCode.G))
         {
-            _state = PlayerState.Waving;
+            _state = PlayerState.Animation;
+            _animNum = Define.Animation.WIN;
         }
     }
 
@@ -92,12 +92,22 @@ public class MyPlayer : Player
             yield return new WaitForSeconds(0.1f);
             try
             {
-                C_MOVE movePacket = new C_MOVE();
-                movePacket.posX = transform.position.x;
-                movePacket.posY = transform.position.y;
-                movePacket.posZ = transform.position.z;
+                if(_state == PlayerState.Animation)
+                {
+                    C_ANIMATION animPacket = new C_ANIMATION();
+                    animPacket.animationId = (int)_animNum;
 
-                _network.Send(movePacket.Write());
+                    _network.Send(animPacket.Write());
+                }
+                else
+                {
+                    C_MOVE movePacket = new C_MOVE();
+                    movePacket.posX = transform.position.x;
+                    movePacket.posY = transform.position.y;
+                    movePacket.posZ = transform.position.z;
+
+                    _network.Send(movePacket.Write());
+                }
             }
             catch (NullReferenceException ex)
             {
